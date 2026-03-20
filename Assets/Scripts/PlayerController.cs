@@ -18,6 +18,9 @@ public class PlayerController : MonoBehaviour
     private Animator playerAnim;
     private AudioSource playerAudio;
 
+    private int jumpCount = 0;
+    public int maxJump = 2;
+
     public bool gameOver = false;
 
     void Awake()
@@ -40,9 +43,10 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (jumpAction.triggered && isOnGround && !gameOver)
+        if (jumpAction.triggered && jumpCount < maxJump && !gameOver)
         {
             rb.AddForce(jumpForce * Vector3.up, ForceMode.Impulse);
+            jumpCount++;
             isOnGround = false;
             playerAnim.SetTrigger("Jump_trig");
             dirtParticle.Stop();
@@ -56,6 +60,7 @@ public class PlayerController : MonoBehaviour
         {
             isOnGround = true;
             dirtParticle.Play();
+            jumpCount = 0;
         }
         else if (collision.gameObject.CompareTag("Obstacle"))
         {
@@ -67,6 +72,8 @@ public class PlayerController : MonoBehaviour
             dirtParticle.Stop();
             playerAudio.PlayOneShot(crashSfx);
         }
+
+       
     }
 
 }
